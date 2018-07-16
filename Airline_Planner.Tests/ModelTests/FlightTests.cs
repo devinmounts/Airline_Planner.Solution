@@ -92,7 +92,7 @@ namespace MySQLCore.Tests
         }
 
         [TestMethod]
-        public void GetCategories_ReturnsAllFlightCategories_CategoryList()
+        public void GetCategories_ReturnsAllFlightCategories_CityList()
         {
             //Arrange
             DateTime testTime = new DateTime(1999, 1, 12);
@@ -112,6 +112,29 @@ namespace MySQLCore.Tests
 
             //Assert
             CollectionAssert.AreEqual(testList, result);
+        }
+
+        [TestMethod]
+        public void Delete_DeletesItemAssociationsFromDatabase_ItemList()
+        {
+            //Arrange
+            DateTime testTime = new DateTime(1999, 1, 12);
+            City testCity = new City(1, "portland");
+            testCity.Save();
+
+            string testDescription = "Mow the lawn";
+            Flight testFlight = new Flight(1, 22, testTime, "portland", "seattle", "on time");
+            testFlight.Save();
+
+            //Act
+            testFlight.AddCity(testCity);
+            testFlight.Delete();
+
+            List<Flight> resultCityFlights = testCity.GetFlights();
+            List<Flight> testCityFlights = new List<Flight> { };
+
+            //Assert
+            CollectionAssert.AreEqual(testCityFlights, resultCityFlights);
         }
     }
 }
