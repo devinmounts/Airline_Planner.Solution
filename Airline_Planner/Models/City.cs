@@ -8,6 +8,8 @@ namespace Airline_Planner.Models
     {
         private int _id;
         private string _name;
+        private List<City> asDepartureCityForTheseFlights:;
+
 
         public City(int id, string name)
         {
@@ -84,6 +86,70 @@ namespace Airline_Planner.Models
 
             cmd.ExecuteNonQuery();
             _id = (int)cmd.LastInsertedId;
+            conn.Close();
+            if (conn != null)
+            {
+                conn.Dispose();
+            }
+        }
+
+        public static City Find(int id)
+        {
+            MySqlConnection conn = DB.Connection();
+            conn.Open();
+            var cmd = conn.CreateCommand() as MySqlCommand;
+            cmd.CommandText = @"SELECT * FROM cities WHERE id = (@searchId);";
+
+            MySqlParameter searchId = new MySqlParameter();
+            searchId.ParameterName = "@searchId";
+            searchId.Value = id;
+            cmd.Parameters.Add(searchId);
+
+            var rdr = cmd.ExecuteReader() as MySqlDataReader;
+            int CityId = 0;
+            string Name = String.Empty;
+            while (rdr.Read())
+            {
+                CityId = rdr.GetInt32(0);
+                Name = rdr.GetString(1);
+            }
+            City newCity = new City(CityId, Name);
+            conn.Close();
+            if (conn != null)
+            {
+                conn.Dispose();
+            }
+
+            return newCity;
+        }
+
+        public void Delete()
+        {
+            MySqlConnection conn = DB.Connection();
+            conn.Open();
+            var cmd = conn.CreateCommand() as MySqlCommand;
+            cmd.CommandText = @"DELETE FROM cities WHERE id = @searchId;";
+
+            MySqlParameter searchId = new MySqlParameter();
+            searchId.ParameterName = "@searchId";
+            searchId.Value = _id;
+            cmd.Parameters.Add(searchId);
+
+            cmd.ExecuteNonQuery();
+            conn.Close();
+            if (conn != null)
+            {
+                conn.Dispose();
+            }
+        }
+
+        public static void DeleteAll()
+        {
+            MySqlConnection conn = DB.Connection();
+            conn.Open();
+            var cmd = conn.CreateCommand() as MySqlCommand;
+            cmd.CommandText = @"DELETE FROM cities;";
+            cmd.ExecuteNonQuery();
             conn.Close();
             if (conn != null)
             {

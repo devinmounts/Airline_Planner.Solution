@@ -147,6 +147,112 @@ namespace Airline_Planner.Models
                 conn.Dispose();
             }
         }
+
+        public static Flight Find(int id)
+        {
+            MySqlConnection conn = DB.Connection();
+            conn.Open();
+            var cmd = conn.CreateCommand() as MySqlCommand;
+            cmd.CommandText = @"SELECT * FROM flights WHERE id = (@searchId);";
+
+            MySqlParameter searchId = new MySqlParameter();
+            searchId.ParameterName = "@searchId";
+            searchId.Value = id;
+            cmd.Parameters.Add(searchId);
+
+            var rdr = cmd.ExecuteReader() as MySqlDataReader;
+            int FlightId = 0;
+            int FlightNumber= 0;
+            DateTime Time = new DateTime();
+            string DepartureCity = String.Empty;
+            string ArrivalCity = String.Empty;
+            string Status = String.Empty;
+            while (rdr.Read())
+            {
+                FlightId = rdr.GetInt32(0);
+                FlightNumber = rdr.GetInt32(1);
+                Time = rdr.GetDateTime(2);
+                DepartureCity = rdr.GetString(3);
+                ArrivalCity = rdr.GetString(4);
+            }
+            Flight newFlight = new Flight(FlightId, FlightNumber, Time, DepartureCity, ArrivalCity, Status);
+            conn.Close();
+            if (conn != null)
+            {
+                conn.Dispose();
+            }
+
+            return newFlight;
+        }
+
+
+        public void UpdateFlight(DateTime newTime, string newStatus)
+        {
+            MySqlConnection conn = DB.Connection();
+            conn.Open();
+            var cmd = conn.CreateCommand() as MySqlCommand;
+            cmd.CommandText = @"UPDATE flights SET (time, status) = (@newTime, @newStatus WHERE id = @searchId;";
+
+            MySqlParameter searchId = new MySqlParameter();
+            searchId.ParameterName = "@searchId";
+            searchId.Value = _id;
+            cmd.Parameters.Add(searchId);
+
+            MySqlParameter time = new MySqlParameter();
+            time.ParameterName = "@newTime";
+            time.Value = newTime;
+            cmd.Parameters.Add(time);
+
+            MySqlParameter status = new MySqlParameter();
+            status.ParameterName = "@newTime";
+            status.Value = newStatus;
+            cmd.Parameters.Add(status);
+
+            cmd.ExecuteNonQuery();
+            _time = newTime;
+            _status = newStatus;
+
+            conn.Close();
+            if (conn != null)
+            {
+                conn.Dispose();
+            }
+        }
+
+        public void Delete()
+        {
+            MySqlConnection conn = DB.Connection();
+            conn.Open();
+            var cmd = conn.CreateCommand() as MySqlCommand;
+            cmd.CommandText = @"DELETE FROM flights WHERE id = @searchId;";
+
+            MySqlParameter searchId = new MySqlParameter();
+            searchId.ParameterName = "@searchId";
+            searchId.Value = _id;
+            cmd.Parameters.Add(searchId);
+
+            cmd.ExecuteNonQuery();
+            conn.Close();
+            if (conn != null)
+            {
+                conn.Dispose();
+            }
+        }
+
+        public static void DeleteAll()
+        {
+            MySqlConnection conn = DB.Connection();
+            conn.Open();
+            var cmd = conn.CreateCommand() as MySqlCommand;
+            cmd.CommandText = @"DELETE FROM flights;";
+            cmd.ExecuteNonQuery();
+            conn.Close();
+            if (conn != null)
+            {
+                conn.Dispose();
+            }
+        }
+    }
     }
 
 }
