@@ -194,11 +194,6 @@ namespace Airline_Planner.Models
             MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
             List<Flight> flights = new List<Flight> { };
 
-
-            DateTime testTime1 = new DateTime(1999, 1, 12);
-            Flight testFlight1 = new Flight(1, 22, testTime1, "D", "on time");
-            flights.Add(testFlight1);
-
             while (rdr.Read())
             {
                 //int flightId = rdr.GetInt32(0);
