@@ -9,17 +9,15 @@ namespace Airline_Planner.Models
         private int _id;
         private int _flight_number;
         private DateTime _time = new DateTime();
-        private string _departure_city;
-        private string _arrival_city;
+        private string _adl;
         private string _status;
 
-        public Flight(int id, int flight_number, DateTime time, string departure_city, string arrival_city, string status)
+        public Flight(int id, int flight_number, DateTime time, string adl, string status)
         {
             _id = id;
             _flight_number = flight_number;
             _time = time;
-            _departure_city = departure_city;
-            _arrival_city = arrival_city;
+            _adl = adl;
             _status = status;
         }
 
@@ -38,14 +36,9 @@ namespace Airline_Planner.Models
             return _time;
         }
 
-        public string GetDepartureCity()
+        public string GetADL()
         {
-            return _departure_city;
-        }
-
-        public string GetArrivalCity()
-        {
-            return _arrival_city;
+            return _adl;
         }
 
         public string GetStatus()
@@ -66,10 +59,10 @@ namespace Airline_Planner.Models
                 bool idEquality = this.GetId() == newFlight.GetId();
                 bool nameEquality = this.GetFlightNumber() == newFlight.GetFlightNumber();
                 bool timeEquality = this.GetTime() == newFlight.GetTime();
-                bool departureEquality = this.GetDepartureCity() == newFlight.GetDepartureCity();
-                bool arrivalEquality = this.GetArrivalCity() == newFlight.GetArrivalCity();
+                bool adlEquality = this.GetADL() == newFlight.GetADL();
                 bool statusEquality = this.GetStatus() == newFlight.GetStatus();
-                return (idEquality && nameEquality && timeEquality && departureEquality && arrivalEquality && statusEquality);
+                //return (idEquality && nameEquality && timeEquality && departureEquality && arrivalEquality && statusEquality);
+                return (idEquality && nameEquality && timeEquality && adlEquality && statusEquality);
             }
         }
 
@@ -92,10 +85,9 @@ namespace Airline_Planner.Models
                 int Id = rdr.GetInt32(0);
                 int Flight_Number = rdr.GetInt32(1);
                 DateTime Time = rdr.GetDateTime(2);
-                string Departure_City = rdr.GetString(3);
-                string Arrival_City = rdr.GetString(4);
-                string Status = rdr.GetString(5);
-                Flight newFlight = new Flight(Id, Flight_Number, Time, Departure_City, Arrival_City, Status);
+                string ADL = rdr.GetString(3);
+                string Status = rdr.GetString(4);
+                Flight newFlight = new Flight(Id, Flight_Number, Time, ADL, Status);
                 allFlights.Add(newFlight);
             }
             conn.Close();
@@ -112,7 +104,7 @@ namespace Airline_Planner.Models
             conn.Open();
 
             var cmd = conn.CreateCommand() as MySqlCommand;
-            cmd.CommandText = @"INSERT INTO flights (flight_number, time, departure_city, arrival_city, status) VALUES (@flight_number, @time, @departure_city, @arrival_city, @status);";
+            cmd.CommandText = @"INSERT INTO flights (flight_number, time, adl, status) VALUES (@flight_number, @time, @adl, @status);";
 
             MySqlParameter flight_number = new MySqlParameter();
             flight_number.ParameterName = "@flight_number";
@@ -124,15 +116,10 @@ namespace Airline_Planner.Models
             time.Value = this._time;
             cmd.Parameters.Add(time);
 
-            MySqlParameter departure_city = new MySqlParameter();
-            departure_city.ParameterName = "@departure_city";
-            departure_city.Value = this._departure_city;
-            cmd.Parameters.Add(departure_city);
-
-            MySqlParameter arrival_city = new MySqlParameter();
-            arrival_city.ParameterName = "@arrival_city";
-            arrival_city.Value = this._arrival_city;
-            cmd.Parameters.Add(arrival_city);
+            MySqlParameter adl = new MySqlParameter();
+            adl.ParameterName = "@adl";
+            adl.Value = this._adl;
+            cmd.Parameters.Add(adl);
 
             MySqlParameter status = new MySqlParameter();
             status.ParameterName = "@status";
@@ -164,18 +151,17 @@ namespace Airline_Planner.Models
             int FlightId = 0;
             int FlightNumber = 0;
             DateTime Time = new DateTime();
-            string DepartureCity = String.Empty;
-            string ArrivalCity = String.Empty;
+            string ADL = String.Empty;
             string Status = String.Empty;
             while (rdr.Read())
             {
                 FlightId = rdr.GetInt32(0);
                 FlightNumber = rdr.GetInt32(1);
                 Time = rdr.GetDateTime(2);
-                DepartureCity = rdr.GetString(3);
-                ArrivalCity = rdr.GetString(4);
+                ADL = rdr.GetString(3);
+                Status = rdr.GetString(4);
             }
-            Flight newFlight = new Flight(FlightId, FlightNumber, Time, DepartureCity, ArrivalCity, Status);
+            Flight newFlight = new Flight(FlightId, FlightNumber, Time, ADL, Status);
             conn.Close();
             if (conn != null)
             {
@@ -232,9 +218,10 @@ namespace Airline_Planner.Models
             cmd.Parameters.Add(flightIdParameter);
 
             cmd.ExecuteNonQuery();
+            conn.Close();
             if (conn != null)
             {
-                conn.Close();
+                conn.Dispose();
             }
         }
 
@@ -283,32 +270,32 @@ namespace Airline_Planner.Models
             MySqlConnection conn = DB.Connection();
             conn.Open();
             MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
-            cmd.CommandText = @"SELECT flights.* FROM cities
-                JOIN cities_flights ON (cities.id = cities_flights.city_id)
-                JOIN flights ON (cities_flights.flight_id = flight.id)
-                WHERE cities.id = @CitiesId;";
+            cmd.CommandText = @"SELECT cities.* FROM flights
+                JOIN cities_flights ON (flights.id = cities_flights.flight_id)
+                JOIN cities ON (cities_flights.city_id = cities.id)
+                WHERE flights.id = @FlightId;";
 
-            MySqlParameter cityIdParameter = new MySqlParameter();
-            cityIdParameter.ParameterName = "@CategoryId";
-            cityIdParameter.Value = _id;
-            cmd.Parameters.Add(cityIdParameter);
+            MySqlParameter FlightIdParameter = new MySqlParameter();
+            FlightIdParameter.ParameterName = "@FlightId";
+            FlightIdParameter.Value = this._id;
+            cmd.Parameters.Add(FlightIdParameter);
 
             MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
-            List<City> items = new List<City> { };
+            List<City> cities = new List<City> { };
 
             while (rdr.Read())
             {
-                int itemId = rdr.GetInt32(0);
-                string itemDescription = rdr.GetString(1);
-                City newCity = new City(itemDescription, itemId);
-                items.Add(newCity);
+                int cityId = rdr.GetInt32(0);
+                string cityName = rdr.GetString(1);
+                City newCity = new City(cityId, cityName);
+                cities.Add(newCity);
             }
             conn.Close();
             if (conn != null)
             {
                 conn.Dispose();
             }
-            return items;
+            return cities;
         }
     }
 }

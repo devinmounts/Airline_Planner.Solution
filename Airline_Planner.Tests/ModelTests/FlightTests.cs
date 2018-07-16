@@ -35,8 +35,8 @@ namespace MySQLCore.Tests
         {
             //Arrange, Act
             DateTime testTime = new DateTime(1999, 1, 12);
-            Flight firstFlight = new Flight(1, 22, testTime, "portland", "seattle", "on time");
-            Flight secondFlight = new Flight(1, 22, testTime, "portland", "seattle", "on time");
+            Flight firstFlight = new Flight(1, 22, testTime, "A", "on time");
+            Flight secondFlight = new Flight(1, 22, testTime, "A", "on time");
 
             //Assert
             Assert.AreEqual(firstFlight, secondFlight);
@@ -47,7 +47,7 @@ namespace MySQLCore.Tests
         {
             //Arrange
             DateTime testTime = new DateTime(1999, 1, 12);
-            Flight testFlight = new Flight(1, 22, testTime, "portland", "seattle", "on time");
+            Flight testFlight = new Flight(1, 22, testTime, "A", "on time");
             testFlight.Save();
 
             //Act
@@ -63,7 +63,7 @@ namespace MySQLCore.Tests
         {
             //Arrange
             DateTime testTime = new DateTime(1999, 1, 12);
-            Flight testFlight = new Flight(1, 22, testTime, "portland", "seattle", "on time");
+            Flight testFlight = new Flight(1, 22, testTime, "A", "on time");
             testFlight.Save();
 
             //Act
@@ -81,7 +81,7 @@ namespace MySQLCore.Tests
         {
             //Arrange
             DateTime testTime = new DateTime(1999, 1, 12);
-            Flight testFlight = new Flight(1, 22, testTime, "portland", "seattle", "on time");
+            Flight testFlight = new Flight(1, 22, testTime, "A", "on time");
             testFlight.Save();
 
             //Act
@@ -92,12 +92,13 @@ namespace MySQLCore.Tests
         }
 
         [TestMethod]
-        public void GetCategories_ReturnsAllFlightCategories_CityList()
+        public void GetCities_ReturnsAllFlightCities_CityList()
         {
             //Arrange
             DateTime testTime = new DateTime(1999, 1, 12);
-            Flight testFlight = new Flight(1, 22, testTime, "portland", "seattle", "on time");
+            Flight testFlight = new Flight(1, 22, testTime, "D", "on time");
             testFlight.Save();
+        
 
             City testCity1 = new City(1, "portland");
             testCity1.Save();
@@ -107,23 +108,23 @@ namespace MySQLCore.Tests
 
             //Act
             testFlight.AddCity(testCity1);
+            testFlight.AddCity(testCity2);
             List<City> result = testFlight.GetCities();
-            List<City> testList = new List<City> { testCity1 };
+            List<City> testList = new List<City> { testCity1, testCity2 };
 
             //Assert
             CollectionAssert.AreEqual(testList, result);
         }
 
         [TestMethod]
-        public void Delete_DeletesItemAssociationsFromDatabase_ItemList()
+        public void Delete_DeletesCityAssociationsFromDatabase_ItemList()
         {
             //Arrange
             DateTime testTime = new DateTime(1999, 1, 12);
             City testCity = new City(1, "portland");
             testCity.Save();
 
-            string testDescription = "Mow the lawn";
-            Flight testFlight = new Flight(1, 22, testTime, "portland", "seattle", "on time");
+            Flight testFlight = new Flight(1, 22, testTime, "A", "on time");
             testFlight.Save();
 
             //Act
