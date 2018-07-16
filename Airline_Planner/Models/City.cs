@@ -194,17 +194,23 @@ namespace Airline_Planner.Models
             MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
             List<Flight> flights = new List<Flight> { };
 
+
+            DateTime testTime1 = new DateTime(1999, 1, 12);
+            Flight testFlight1 = new Flight(1, 22, testTime1, "D", "on time");
+            flights.Add(testFlight1);
+
             while (rdr.Read())
             {
-                int flightId = rdr.GetInt32(0);
-                int flightNum = rdr.GetInt32(1);
-                DateTime flightTime = rdr.GetDateTime(2);
-                string flightADL = rdr.GetString(3);
-                string flightStatus = rdr.GetString(4);
+                //int flightId = rdr.GetInt32(0);
+                //int flightNum = rdr.GetInt32(1);
+                //DateTime flightTime = rdr.GetDateTime(2);
+                //string flightADL = rdr.GetString(3);
+                //string flightStatus = rdr.GetString(4);
 
-
-                Flight newFlight = new Flight(flightId, flightNum, flightTime, flightADL, flightStatus);
-                flights.Add(newFlight);
+                //Flight newFlight = new Flight(flightId, flightNum, flightTime, flightADL, flightStatus);
+                DateTime testTime = new DateTime(1999, 1, 12);
+                Flight testFlight = new Flight(1, 22, testTime, "D", "on time");
+                flights.Add(testFlight);
             }
             conn.Close();
             if (conn != null)
