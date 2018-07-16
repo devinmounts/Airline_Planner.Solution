@@ -8,7 +8,7 @@ namespace Airline_Planner.Models
     {
         private int _id;
         private int _flight_number;
-        private DateTime _time;
+        private DateTime _time = new DateTime();
         private string _departure_city;
         private string _arrival_city;
         private string _status;
@@ -251,6 +251,16 @@ namespace Airline_Planner.Models
             {
                 conn.Dispose();
             }
+        }
+
+        public void AddCategory(City newCity)
+        {
+        }
+
+        public List<City> GetCities(City newCity)
+        {
+            List<City> cities = new List<City> { };
+            return cities;
         }
     }
     }

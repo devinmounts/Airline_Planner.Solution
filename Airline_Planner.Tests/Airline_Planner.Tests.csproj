@@ -16,4 +16,7 @@
     <Folder Include="ControllerTests\" />
     <Folder Include="ModelTests\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Airline_Planner\Airline_Planner.csproj" />
+  </ItemGroup>
 </Project>
