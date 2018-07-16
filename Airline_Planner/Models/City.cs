@@ -8,7 +8,7 @@ namespace Airline_Planner.Models
     {
         private int _id;
         private string _name;
-        private List<City> asDepartureCityForTheseFlights:;
+     
 
 
         public City(int id, string name)
@@ -64,6 +64,7 @@ namespace Airline_Planner.Models
                 City newCity = new City(Id, Name);
                 allCities.Add(newCity);
              }
+            conn.Close();
             if (conn != null)
             {
                 conn.Dispose();

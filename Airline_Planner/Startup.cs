@@ -41,4 +41,3 @@ namespace Airline_Planner
     }
 }
 
-}

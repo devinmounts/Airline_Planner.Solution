@@ -42,7 +42,7 @@ namespace Airline_Planner.Models
         {
             return _departure_city;
         }
-       
+
         public string GetArrivalCity()
         {
             return _arrival_city;
@@ -62,7 +62,7 @@ namespace Airline_Planner.Models
             }
             else
             {
-                Flight newFlight = (Flight) otherFlight;
+                Flight newFlight = (Flight)otherFlight;
                 bool idEquality = this.GetId() == newFlight.GetId();
                 bool nameEquality = this.GetFlightNumber() == newFlight.GetFlightNumber();
                 bool timeEquality = this.GetTime() == newFlight.GetTime();
@@ -87,7 +87,6 @@ namespace Airline_Planner.Models
             var cmd = conn.CreateCommand() as MySqlCommand;
             cmd.CommandText = @"SELECT * FROM flights;";
             var rdr = cmd.ExecuteReader() as MySqlDataReader;
-            cmd.ExecuteReader();
             while (rdr.Read())
             {
                 int Id = rdr.GetInt32(0);
@@ -99,11 +98,12 @@ namespace Airline_Planner.Models
                 Flight newFlight = new Flight(Id, Flight_Number, Time, Departure_City, Arrival_City, Status);
                 allFlights.Add(newFlight);
             }
+            conn.Close();
             if (conn != null)
             {
                 conn.Dispose();
             }
-            return  allFlights;
+            return allFlights;
         }
 
         public void Save()
@@ -112,7 +112,7 @@ namespace Airline_Planner.Models
             conn.Open();
 
             var cmd = conn.CreateCommand() as MySqlCommand;
-            cmd.CommandText = @"INSERT INTO flighs (flight_number, time, departure_city, arrival_city, status) VALUES (@flight_number, @time, @departure_city, @arrival_city, @status);";
+            cmd.CommandText = @"INSERT INTO flights (flight_number, time, departure_city, arrival_city, status) VALUES (@flight_number, @time, @departure_city, @arrival_city, @status);";
 
             MySqlParameter flight_number = new MySqlParameter();
             flight_number.ParameterName = "@flight_number";
@@ -162,7 +162,7 @@ namespace Airline_Planner.Models
 
             var rdr = cmd.ExecuteReader() as MySqlDataReader;
             int FlightId = 0;
-            int FlightNumber= 0;
+            int FlightNumber = 0;
             DateTime Time = new DateTime();
             string DepartureCity = String.Empty;
             string ArrivalCity = String.Empty;
@@ -253,16 +253,16 @@ namespace Airline_Planner.Models
             }
         }
 
-        public void AddCategory(City newCity)
+        public void AddCity(City newCity)
         {
         }
 
-        public List<City> GetCities(City newCity)
+        public List<City> GetCities()
         {
             List<City> cities = new List<City> { };
             return cities;
         }
     }
-    }
-
 }
+
+

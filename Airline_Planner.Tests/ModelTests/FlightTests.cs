@@ -12,7 +12,7 @@ namespace MySQLCore.Tests
     {
         public FlightTest()
         {
-            DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=3306;database=airline_planner_test;";
+            DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=airline_planner_test;";
         }
         public void Dispose()
         {
@@ -47,7 +47,7 @@ namespace MySQLCore.Tests
         {
             //Arrange
             DateTime testTime = new DateTime(1999, 1, 12);
-            Flight testFlight = new new Flight(1, 22, testTime, "portland", "seattle", "on time");
+            Flight testFlight = new Flight(1, 22, testTime, "portland", "seattle", "on time");
             testFlight.Save();
 
             //Act
@@ -63,7 +63,7 @@ namespace MySQLCore.Tests
         {
             //Arrange
             DateTime testTime = new DateTime(1999, 1, 12);
-            Flight testFlight = new new Flight(1, 22, testTime, "portland", "seattle", "on time");
+            Flight testFlight = new Flight(1, 22, testTime, "portland", "seattle", "on time");
             testFlight.Save();
 
             //Act
@@ -106,7 +106,7 @@ namespace MySQLCore.Tests
             testCity2.Save();
 
             //Act
-            testFlight.AddCategory(testCity1);
+            testFlight.AddCity(testCity1);
             List<City> result = testFlight.GetCities();
             List<City> testList = new List<City> { testCity1 };
 
